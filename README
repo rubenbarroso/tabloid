@@ -13,13 +13,15 @@ Tabloid - My Requisites
   + Max number of posts per page
 + Filesystem structure
   blog/
-    posts/
-      2011_09_16_15_50/
-        images/
-          example.png
-        post.config <--- metadata
-        post.tabloid <--- contents
-    blog.config
+    index.cgi
+    contents/
+      blog.config
+      posts/
+        2011_09_16_15_50/
+          images/
+            example.png
+          post.config <--- metadata
+          post.tabloid <--- contents
 + Metadata
   + Use ConfigParser (standard lib)
   + General metadata
