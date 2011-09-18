@@ -15,24 +15,25 @@ Tabloid - My Requisites
   blog/
     index.cgi
     contents/
-      blog.config
+      tabloid.config
       posts/
         2011_09_16_15_50/
           images/
             example.png
           post.config <--- metadata
-          post.tabloid <--- contents
+          post.content <--- contents
 + Metadata
   + Use ConfigParser (standard lib)
   + General metadata
-    [blog]
+      [blog]
       title = "TICS"
       tagline = "Still deciding..."
       author = "Rubén Barroso"
       pagesize = 10
-  + Post metadata
-    title = "My first post"
-+ Post body format (post.tabloid)
+  + Post metadata (post.config)
+      [post]
+      title = "My first post"
++ Post body format (post.content)
   + Mostly free HTML
   + Some special renderers
     + <code> ... </code>
