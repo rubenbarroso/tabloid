@@ -1,4 +1,10 @@
 from ConfigParser import ConfigParser
+from os import listdir
+from os.path import join
+import re
+from post import read_post_metadata, read_post_content, Post
+
+post_pattern = re.compile('^\d{4}_\d{2}_\d{2}_\d{2}_\d{2}$')
 
 class Tabloid:
     """
@@ -7,16 +13,14 @@ class Tabloid:
     def __init__(self, metadata):
         self.metadata = metadata
 
+    def load(self):
+        dirs = list_post_locations()
+        self.posts = []
 
-class TabloidMetadata:
-    """
-    """
-
-    def __init__(self, metadata):
-        self.title = metadata['title']
-        self.tagline = metadata['tagline']
-        self.author = metadata['author']
-        self.page_size = metadata['page_size']
+        for i in range(min(len(dirs), int(self.metadata['page_size']))):
+            post_metadata = read_post_metadata(join(dirs[i], 'post.config'))
+            post_content = read_post_content(join(dirs[i], 'post.tabloid'))
+            self.posts.append(Post(post_metadata, post_content))
 
 
 def read_tabloid_metadata():
@@ -24,11 +28,21 @@ def read_tabloid_metadata():
     """
     config = ConfigParser()
     config.read("contents/tabloid.config")
-    title = config.get("blog", "title")
-    tagline = config.get("blog", "tagline")
-    author = config.get("blog", "author")
-    page_size = config.get("blog", "page_size")
-    return TabloidMetadata({'title': title,
-                            'tagline': tagline,
-                            'author': author,
-                            'page_size': page_size})
+
+    metadata = {}
+
+    for section in config.sections():
+        for name, value in config.items(section):
+            metadata[name] = value
+    return metadata
+
+
+def list_post_locations():
+    """
+    """
+
+    def is_post(dir):
+        return not post_pattern.match(dir) is None
+
+    dirs = listdir('contents/posts')
+    return sorted([join('contents/posts', dir) for dir in dirs if is_post(dir)])
