@@ -10,13 +10,13 @@ def main():
     print
     print "<html>"
     print "  <head>"
-    print "    <title>{0}</title>".format(metadata['title'])
+    print "    <title>%s</title>" % metadata['title']
     print "  </head>"
     print "  <body>"
     print "Tabloid was created by", metadata['author'], "(c) 2011"
     print
     for post in tabloid.posts:
-        print "<h1>{0}</h1>".format(post.metadata.title)
+        print "<h1>%s</h1>" % post.metadata.title
         print
         print post.render()
     print "  </body>"
