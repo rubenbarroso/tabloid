@@ -35,7 +35,7 @@ Tabloid - My Requisites
       title = "My first post"
 + Post body format (post.content)
   + Probably a reduced set of Markdown (http://daringfireball.net/projects/markdown/basics)
-    + headers -> #{1,6}\s.+
+    + headers
     + paragraphs
   + Some special renderers
     + <code> ... </code>
@@ -46,5 +46,6 @@ Tabloid - My Requisites
 + Visualizing one specific post
   + HTTP param ?post=2011_09_16_15_50
   + The previous URL generated also by <post id=""/> in a post body
++ RSS
 
   

@@ -1,5 +1,5 @@
 import unittest
-from renderer import HeaderRenderer, Renderer, ParagraphRenderer
+from renderer import HeaderRenderer, Renderer, ParagraphRenderer, EmphasisRenderer
 
 class RendererTestCase(unittest.TestCase):
     """ """
@@ -70,6 +70,24 @@ class HeaderRendererIgnoreInputTestCase(unittest.TestCase):
         for input, output in self.cases:
             result = renderer.render(input)
             self.assertEqual(output, result)
+
+
+class EmphasisRendererTestCase(unittest.TestCase):
+    """ """
+
+    def setUp(self):
+        self.cases = [('*Emphasized*', '<em>Emphasized</em>'),
+            ('_Emphasized_', '<em>Emphasized</em>'),
+            ('*Emphasized_', '*Emphasized_'),
+            ('_Emphasized*', '_Emphasized*')]
+
+    def test_render(self):
+        """Verify header rendering"""
+        renderer = EmphasisRenderer()
+        for input, output in self.cases:
+            result = renderer.render(input)
+            self.assertEqual(output, result)
+
 
 if __name__ == '__main__':
     unittest.main()
