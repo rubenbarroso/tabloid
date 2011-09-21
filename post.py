@@ -1,5 +1,6 @@
 from __future__ import with_statement
 from ConfigParser import ConfigParser
+from renderer import Renderer
 
 class Post:
     """ Metadata and contents of a post.
@@ -14,8 +15,8 @@ class Post:
     def render(self):
         """ Renders the contents of this post to be viewed in the browser.
         """
-        #TODO create suitable HTML from the contents
-        return self.content
+        renderer = Renderer()
+        return renderer.render(self.content)
 
 class PostMetadata:
     """ Metadata of a post.

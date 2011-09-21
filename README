@@ -1,7 +1,7 @@
 Tabloid - My Requisites
 -----------------------
 
-+ More than one post per day
+- More than one post per day
 + Post metadata
   + Title
   + Category
@@ -34,7 +34,9 @@ Tabloid - My Requisites
       [post]
       title = "My first post"
 + Post body format (post.content)
-  + Mostly free HTML
+  + Probably a reduced set of Markdown (http://daringfireball.net/projects/markdown/basics)
+    + headers -> #{1,6}\s.+
+    + paragraphs
   + Some special renderers
     + <code> ... </code>
     + <imgref id="example.png"/> <-- Hmm, size? Justification?
