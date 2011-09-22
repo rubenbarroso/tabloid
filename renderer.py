@@ -5,7 +5,8 @@ class Renderer:
 
     def __init__(self):
         self.renderers = [ParagraphRenderer(),
-                          HeaderRenderer()]
+                          HeaderRenderer(),
+                          EmphasisRenderer()]
 
     def render(self, input):
         for renderer in self.renderers:
@@ -14,14 +15,17 @@ class Renderer:
 
 
 class ParagraphRenderer:
-    """ """
+    """From the Markdown documentation:
+
+       A paragraph is simply one or more consecutive lines of text, separated
+       by one or more blank lines."""
 
     def __init__(self):
         pass
 
     def render(self, input):
-        return re.sub('\n{2}([\w|\\s]+)\n',
-                      '\n<p>\\1</p>\n',
+        return re.sub('(\n{2,})((\s|.)+)(\n{2,})',
+                      '\\1<p>\\2</p>\\4',
                       input)
 
 
@@ -39,10 +43,10 @@ class HeaderRenderer:
 
     def _to_header(self, match):
         header = self.headers[len(match.group(1)) - 1]
-        return header[0] + match.group(2) + header[1] + "\n"
+        return header[0] + match.group(2) + header[1] + '\n'
 
     def render(self, input):
-        return re.sub('^(#{1,6})\s(.+)\\n',
+        return re.sub('^(#{1,6})[ ](\S.+)\n',
                       self._to_header,
                       input)
 

@@ -7,8 +7,10 @@ class RendererTestCase(unittest.TestCase):
     def setUp(self):
         self.cases = [('# Title 1\n',
                        '<h1>Title 1</h1>\n'),
-            ('# Title\n\nParagraph\n',
-             '<h1>Title</h1>\n<p>Paragraph</p>\n')]
+            ('# Title\n\nParagraph\n\n',
+             '<h1>Title</h1>\n\n<p>Paragraph</p>\n\n'),
+            ('## Post Example\n\nThis is my first post, yay!\n\n',
+             '<h2>Post Example</h2>\n\n<p>This is my first post, yay!</p>\n\n')]
 
     def test_render(self):
         """ """
@@ -22,12 +24,18 @@ class ParagraphRendererTestCase(unittest.TestCase):
     """ """
 
     def setUp(self):
-        self.cases = [('\n\nThis is a paragraph\n',
-                       '\n<p>This is a paragraph</p>\n'),
-            ('\n\nThis is a\tparagraph\n',
-             '\n<p>This is a\tparagraph</p>\n'),
-            ('\n\nThis is a\nparagraph\n',
-             '\n<p>This is a\nparagraph</p>\n')]
+        self.cases = [('\n\nThis is a paragraph\n\n',
+                       '\n\n<p>This is a paragraph</p>\n\n'),
+            ('\n\nThis is a\tparagraph\n\n',
+             '\n\n<p>This is a\tparagraph</p>\n\n'),
+            ('\n\nThis is a\nparagraph\n\n',
+             '\n\n<p>This is a\nparagraph</p>\n\n'),
+            ('pre\n\nParagraph\n\n',
+             'pre\n\n<p>Paragraph</p>\n\n'),
+            ('\n\nWith a,comma!\n\n',
+             '\n\n<p>With a,comma!</p>\n\n'),
+        ('\n\n\nParagraph\n\n',
+         '\n\n\n<p>Paragraph</p>\n\n')]
 
     def test_render(self):
         """Verify header rendering"""
@@ -63,7 +71,8 @@ class HeaderRendererIgnoreInputTestCase(unittest.TestCase):
     def setUp(self):
         self.cases = [('#Title', '#Title'),
             ('####### Title 7', '####### Title 7'),
-            (' ## Title 2', ' ## Title 2')]
+            (' ## Title 2', ' ## Title 2'),
+            ('##  Title 2', '##  Title 2')]
 
     def test_ignored(self):
         renderer = HeaderRenderer()
