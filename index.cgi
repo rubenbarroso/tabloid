@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import cgi
 import cgitb
-from tabloid import read_tabloid_metadata, Tabloid
+from tabloid import Tabloid
 
 cgitb.enable()
 
@@ -9,18 +9,17 @@ def main():
     form = cgi.FieldStorage()
     id = "id" in form
 
-    metadata = read_tabloid_metadata()
-    tabloid = Tabloid(metadata)
+    tabloid = Tabloid()
     tabloid.load()
 
     print "Content-type: text/html"
     print
     print "<html>"
     print "  <head>"
-    print "    <title>%s</title>" % metadata['title']
+    print "    <title>%s</title>" % tabloid.title()
     print "  </head>"
     print "  <body>"
-    print "Tabloid was created by", metadata['author'], "(c) 2011"
+    print "Tabloid was created by", tabloid.author(), "(c) 2011"
     print
     if id:
         print "Id: ", form.getvalue("id")
