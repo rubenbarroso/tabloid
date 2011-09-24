@@ -1,17 +1,23 @@
 #!/usr/bin/python
 import cgi
 import cgitb
+import urllib
 from tabloid import Tabloid
 
 cgitb.enable()
 
 def main():
     form = cgi.FieldStorage()
-    id = "id" in form
+
+    if "page" in form:
+        page_number = int(form.getvalue("page"))
+    else:
+        page_number = 0
 
     tabloid = Tabloid()
     tabloid.load()
 
+    # blog headers
     print "Content-type: text/html"
     print
     print "<html>"
@@ -21,14 +27,24 @@ def main():
     print "  <body>"
     print "Tabloid was created by", tabloid.author(), "(c) 2011"
     print
-    if id:
-        print "Id: ", form.getvalue("id")
-    else:
-        print "Not Id found ha"
-    for post in tabloid.posts:
+
+    # post listing
+    paginator = tabloid.get_paginator()
+    for post in paginator.get_page(page_number):
+        print
         print "<h1>%s</h1>" % post.metadata.title
         print
         print post.render()
+        print
+
+    previous_page = paginator.previous_page(page_number)
+    if previous_page is not None:
+        print '<a href="/index.cgi?%s"><< Newer posts</a>' % urllib.urlencode({"page": previous_page})
+
+    next_page = paginator.next_page(page_number)
+    if next_page is not None:
+        print '<a href="/index.cgi?%s">Older posts >></a>' % urllib.urlencode({"page": next_page})
+
     print "  </body>"
     print "</html>"
 
