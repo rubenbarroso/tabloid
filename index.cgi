@@ -25,7 +25,7 @@ def main():
     print "    <title>%s</title>" % tabloid.title()
     print "  </head>"
     print "  <body>"
-    print "Tabloid was created by", tabloid.author(), "(c) 2011"
+    print '<a href="/index.cgi">Home</a>'
     print
 
     # single post rendering - test: 2011_09_16_15_50
