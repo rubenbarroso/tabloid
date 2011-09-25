@@ -20,6 +20,8 @@ Tabloid - Requirements
         2011_09_16_15_50/
           images/
             example.png
+          files/
+            document.pdf
           post.config <--- metadata
           post.content <--- contents
 + Metadata
@@ -43,8 +45,8 @@ Tabloid - Requirements
     + Cross references between posts -> <post id="2011_09_16_15_50">text</post>
 + Pagination based on blog.pagesize
   + HTTP param ?page=X
-+ Visualizing one specific post
-  + HTTP param ?post=2011_09_16_15_50
+- Visualizing one specific post
+  - HTTP param ?post=2011_09_16_15_50
   + The previous URL generated also by <post id=""/> in a post body
 + RSS
 + Caching

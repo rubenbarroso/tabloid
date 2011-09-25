@@ -32,11 +32,7 @@ def main():
     if "post" in form:
         post = tabloid.get_post(form.getvalue("post"))
         if post is not None:
-            print
-            print "<h1>%s</h1>" % post.metadata.title
-            print
             print post.render()
-            print
         else:
             print
             print "<p>Post not found.</p>"
@@ -44,11 +40,7 @@ def main():
         # paginated listing
         paginator = tabloid.get_paginator()
         for post in paginator.get_page(page_number):
-            print
-            print "<h1>%s</h1>" % post.metadata.title
-            print
             print post.render()
-            print
 
         previous_page = paginator.previous_page(page_number)
         if previous_page is not None:
