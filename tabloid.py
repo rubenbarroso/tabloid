@@ -36,7 +36,7 @@ class Tabloid:
                 return not post_pattern.match(dir) is None
 
             dirs = listdir('contents/posts')
-            return sorted([join('contents/posts', dir) for dir in dirs if is_post(dir)], reverse=True)
+            return sorted([self._get_post_location(dir) for dir in dirs if is_post(dir)], reverse=True)
 
         self.post_locations = _list_post_locations()
 
@@ -47,6 +47,16 @@ class Tabloid:
             return Post(post_location)
 
         return Paginator(self.post_locations, page_size, _generate)
+
+    def get_post(self, post_timestamp):
+        post_location = self._get_post_location(post_timestamp)
+        if post_location in self.post_locations:
+            return Post(post_location)
+        else:
+            return None
+
+    def _get_post_location(self, post_timestamp):
+        return join('contents/posts', post_timestamp)
 
     def title(self):
         return self.metadata['title']
