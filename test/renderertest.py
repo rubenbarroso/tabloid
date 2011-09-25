@@ -1,5 +1,5 @@
 import unittest
-from renderer import HeaderRenderer, Renderer, ParagraphRenderer, EmphasisRenderer
+from renderer import HeaderRenderer, Renderer, ParagraphRenderer, EmphasisRenderer, ImageRenderer
 
 class RendererTestCase(unittest.TestCase):
     """ """
@@ -34,8 +34,8 @@ class ParagraphRendererTestCase(unittest.TestCase):
              'pre\n\n<p>Paragraph</p>\n\n'),
             ('\n\nWith a,comma!\n\n',
              '\n\n<p>With a,comma!</p>\n\n'),
-        ('\n\n\nParagraph\n\n',
-         '\n\n\n<p>Paragraph</p>\n\n')]
+            ('\n\n\nParagraph\n\n',
+             '\n\n\n<p>Paragraph</p>\n\n')]
 
     def test_render(self):
         """Verify header rendering"""
@@ -88,7 +88,8 @@ class EmphasisRendererTestCase(unittest.TestCase):
         self.cases = [('*Emphasized*', '<em>Emphasized</em>'),
             ('_Emphasized_', '<em>Emphasized</em>'),
             ('*Emphasized_', '*Emphasized_'),
-            ('_Emphasized*', '_Emphasized*')]
+            ('_Emphasized*', '_Emphasized*'),
+            ('*Empha\nsized*', '*Empha\nsized*')]
 
     def test_render(self):
         """Verify header rendering"""
@@ -97,6 +98,20 @@ class EmphasisRendererTestCase(unittest.TestCase):
             result = renderer.render(input)
             self.assertEqual(output, result)
 
+
+class ImageRendererTestCase(unittest.TestCase):
+    """ """
+
+    def setUp(self):
+        self.cases = [('![alt text](img.jpg "title")',
+                       '<img src="/path/images/img.jpg" alt="alt text" title="title" />')]
+
+    def test_render(self):
+        """Verify header rendering"""
+        renderer = ImageRenderer("/path")
+        for input, output in self.cases:
+            result = renderer.render(input)
+            self.assertEqual(output, result)
 
 if __name__ == '__main__':
     unittest.main()

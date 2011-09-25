@@ -1,5 +1,5 @@
-Tabloid - My Requisites
------------------------
+Tabloid - Requirements
+----------------------
 
 - More than one post per day
 + Post metadata
@@ -47,5 +47,6 @@ Tabloid - My Requisites
   + HTTP param ?post=2011_09_16_15_50
   + The previous URL generated also by <post id=""/> in a post body
 + RSS
-
-  
++ Caching
++ Stress tests
++ Security test

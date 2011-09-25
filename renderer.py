@@ -3,10 +3,11 @@ import re
 class Renderer:
     """ """
 
-    def __init__(self):
+    def __init__(self, post_location):
         self.renderers = [ParagraphRenderer(),
                           HeaderRenderer(),
-                          EmphasisRenderer()]
+                          EmphasisRenderer(),
+                          ImageRenderer(post_location)]
 
     def render(self, input):
         for renderer in self.renderers:
@@ -25,7 +26,7 @@ class ParagraphRenderer:
 
     def render(self, input):
         return re.sub('(\n{2,})((\s|.)+)(\n{2,})',
-                      '\\1<p>\\2</p>\\4',
+                      r'\1<p>\2</p>\4',
                       input)
 
 
@@ -46,7 +47,7 @@ class HeaderRenderer:
         return header[0] + match.group(2) + header[1] + '\n'
 
     def render(self, input):
-        return re.sub('^(#{1,6})[ ](\S.+)\n',
+        return re.sub(r'^(#{1,6})[ ](\S.+)\n',
                       self._to_header,
                       input)
 
@@ -59,5 +60,18 @@ class EmphasisRenderer:
 
     def render(self, input):
         return re.sub('(?P<star>[\*_])(.+)(?P=star)',
-                      '<em>\\2</em>',
+                      r'<em>\2</em>',
+                      input)
+
+
+class ImageRenderer:
+    """This transforms ![alt text](/path/to/img.jpg "Title") into
+       <img src="/path/to/img.jpg" alt="alt text" title="Title" />"""
+
+    def __init__(self, post_location):
+        self.post_location = post_location
+
+    def render(self, input):
+        return re.sub(r'!\[(.*)\]\(([^s]+)[ ]+"(.+)"\)',
+                      r'<img src="%s%s\2" alt="\1" title="\3" />' % (self.post_location, "/images/"),
                       input)

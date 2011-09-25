@@ -4,29 +4,29 @@ from renderer import Renderer
 from os.path import join
 
 class Post:
-    """ Metadata and contents of a post.
-    """
+    """ Metadata and contents of a post"""
 
-    def __init__(self, location):
-        self.metadata = self._read_post_metadata(location)
-        self.content = self._read_post_content(location)
+    def __init__(self, post_location):
+        self.post_location = post_location
+        self.metadata = self._read_post_metadata(post_location)
+        self.content = self._read_post_content(post_location)
 
     def _read_post_metadata(self, post_location):
-        """ Reads the metadata of a post from a file."""
+        """ Reads the metadata of a post from a file"""
         config = ConfigParser()
         config.read(join(post_location, "post.config"))
         title = config.get("post", "title")
         return PostMetadata(title)
 
     def _read_post_content(self, post_location):
-        """ Reads the contents of a post from a file."""
+        """ Reads the contents of a post from a file"""
         post_content_filename = join(post_location, "post.tabloid")
         with open(post_content_filename) as content_file:
             return content_file.read()
 
     def render(self):
-        """ Renders the contents of this post to be viewed in the browser."""
-        return Renderer().render(self.content)
+        """ Renders the contents of this post to be viewed in the browser"""
+        return Renderer(self.post_location).render(self.content)
 
 
 class PostMetadata:
