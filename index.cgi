@@ -18,13 +18,16 @@ def main():
     tabloid = Tabloid()
 
     # headers
-    print "Content-type: text/html"
+    # Nice google webfonts: Lekton, Jura
+    print 'Content-type: text/html'
     print
-    print "<html>"
-    print "  <head>"
-    print "    <title>%s</title>" % tabloid.title()
-    print "  </head>"
-    print "  <body>"
+    print '<html>'
+    print '  <head>'
+    print '    <link rel="stylesheet" type="text/css" href="tabloid.css" />'
+    print '    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Lekton">'
+    print '    <title>%s</title>' % tabloid.title()
+    print '  </head>'
+    print '  <body>'
     print '<a href="/index.cgi">Home</a>'
     print
 
