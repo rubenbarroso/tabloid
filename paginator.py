@@ -1,14 +1,9 @@
 class Paginator:
     """ """
 
-    def __init__(self, items, page_size, generate=None):
+    def __init__(self, items, page_size):
         self.page_size = page_size
         self.items = items
-        if generate is None:
-            # identity generator
-            self.generate = lambda x: x
-        else:
-            self.generate = generate
 
     def get_page(self, page_number=0):
         first_index, last_index = self._calculate_indexes(page_number)
@@ -16,7 +11,7 @@ class Paginator:
         # if last_index > len(items), it includes all
         # items to the end of the list
         for item in self.items[first_index:last_index]:
-            yield self.generate(item)
+            yield item
 
     def _calculate_indexes(self, page_number):
         first_index = page_number * self.page_size
@@ -37,3 +32,11 @@ class Paginator:
             return page_number - 1
         else:
             return None
+
+    def is_empty(self):
+        """ """
+        return not self.items
+
+    def is_not_empty(self):
+        """ """
+        return not self.is_empty()

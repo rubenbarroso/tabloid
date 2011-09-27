@@ -2,6 +2,7 @@
 import cgi
 import cgitb
 import urllib
+from post import with_timestamp, with_category
 from tabloid import Tabloid
 
 cgitb.enable()
@@ -15,9 +16,8 @@ def main():
         page_number = 0
 
     tabloid = Tabloid()
-    tabloid.load()
 
-    # blog headers
+    # headers
     print "Content-type: text/html"
     print
     print "<html>"
@@ -28,30 +28,45 @@ def main():
     print '<a href="/index.cgi">Home</a>'
     print
 
-    # single post rendering - test: 2011_09_16_15_50
+    # filter building
+    filters = []
+
+    extra_params = {}
+
     if "post" in form:
-        post = tabloid.get_post(form.getvalue("post"))
-        if post is not None:
-            print post.render()
-        else:
-            print
-            print "<p>Post not found.</p>"
-    else:
-        # paginated listing
-        paginator = tabloid.get_paginator()
+        timestamp = form.getvalue("post")
+        filters.append(with_timestamp(timestamp))
+
+    if "category" in form:
+        category = form.getvalue("category")
+        filters.append(with_category(category))
+        extra_params['category'] = category
+
+    # pagination
+    paginator = tabloid.get_paginator(filters)
+    if paginator.is_not_empty():
         for post in paginator.get_page(page_number):
             print post.render()
 
         previous_page = paginator.previous_page(page_number)
         if previous_page is not None:
-            print '<a href="/index.cgi?%s"><< Newer posts</a>' % urllib.urlencode({"page": previous_page})
+            print '<a href="/index.cgi?%s"><< Newer posts</a>' % urllib.urlencode(
+                    merge_dicts({"page": previous_page}, extra_params))
 
         next_page = paginator.next_page(page_number)
         if next_page is not None:
-            print '<a href="/index.cgi?%s">Older posts >></a>' % urllib.urlencode({"page": next_page})
+            print '<a href="/index.cgi?%s">Older posts >></a>' % urllib.urlencode(
+                    merge_dicts({"page": next_page}, extra_params))
+    else:
+        print
+        print "<p>No posts found.</p>"
 
+    # footer
     print "  </body>"
     print "</html>"
+
+def merge_dicts(dict1, dict2):
+    return dict(dict1.items() + dict2.items())
 
 if __name__ == "__main__":
     main()

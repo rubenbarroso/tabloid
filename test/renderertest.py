@@ -14,7 +14,7 @@ class RendererTestCase(unittest.TestCase):
 
     def test_render(self):
         """ """
-        renderer = Renderer()
+        renderer = Renderer('contents/post/2009_08_05_12_56')
         for input, output in self.cases:
             result = renderer.render(input)
             self.assertEqual(result, output)

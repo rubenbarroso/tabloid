@@ -6,30 +6,40 @@ from os.path import join
 class Post:
     """ Metadata and contents of a post"""
 
-    def __init__(self, post_location):
-        self.post_location = post_location
-        self.metadata = self._read_post_metadata(post_location)
-        self.content = self._read_post_content(post_location)
+    def __init__(self, timestamp):
+        self.metadata = self._read_post_metadata(timestamp)
 
-    def _read_post_metadata(self, post_location):
-        """ Reads the metadata of a post from a file"""
+    def _read_post_metadata(self, timestamp):
+        """ Reads the metadata of a post from a config file"""
+        location = join('contents/posts', timestamp)
+
         config = ConfigParser()
-        config.read(join(post_location, "post.config"))
+        config.read(join(location, "post.config"))
         title = config.get("post", "title")
-        return PostMetadata(post_location, title)
+        categories = config.get("post", "category").split(',')
+        return PostMetadata(timestamp, location, title, categories)
 
-    def _read_post_content(self, post_location):
+    def _read_post_content(self):
         """ Reads the contents of a post from a file"""
-        post_content_filename = join(post_location, "post.tabloid")
+        post_content_filename = join(self.metadata.location, "post.tabloid")
         with open(post_content_filename) as content_file:
             return content_file.read()
 
     def render(self):
         """ Renders the contents of this post to be viewed in the browser"""
+        # title
         output = ['\n', '<h1><a href="?post=%s">%s</a></h1>' %
-                        (self.metadata.post_timestamp, self.metadata.title), '\n']
-        renderer = Renderer(self.post_location)
-        output.append(renderer.render(self.content))
+                        (self.metadata.timestamp, self.metadata.title), '\n']
+
+        # content
+        renderer = Renderer(self.metadata.location)
+        content = self._read_post_content()
+        output.append(renderer.render(content))
+
+        # categories
+        output.append('<p><small>Posted on ')
+        [output.append('<a href="?category=%s">%s</a> ' % (category, category)) for category in self.metadata.categories]
+        output.append('</small></p>')
         return ''.join(output)
 
 
@@ -43,12 +53,29 @@ class PostMetadata:
         title - the title of the post - a string
     """
 
-    def __init__(self, post_location, title):
-        self.post_timestamp = self._get_post_timestamp(post_location)
+    def __init__(self, timestamp, location, title, categories):
+        self.timestamp = timestamp
+        self.location = location
         self.title = title
-
-    def _get_post_timestamp(self, post_location):
-        return post_location.rpartition('/')[2]
+        self.categories = sorted([category.strip() for category in categories])
 
 
-    
+def with_timestamp(timestamp=None):
+    def _pred(post):
+        if timestamp is None:
+            return True
+        else:
+            return post.metadata.timestamp == timestamp
+
+    return _pred
+
+
+def with_category(category=None):
+    def _pred(post):
+        if category is None:
+            return True
+        else:
+            return category in post.metadata.categories
+
+    return _pred
+
