@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import cgi
 import cgitb
+import md5
 import urllib
 from post import with_timestamp, with_category
 from tabloid import Tabloid
@@ -10,12 +11,34 @@ cgitb.enable()
 def main():
     form = cgi.FieldStorage()
 
-    if "page" in form:
-        page_number = int(form.getvalue("page"))
-    else:
-        page_number = 0
-
     tabloid = Tabloid()
+
+    if "alt" in form:
+        print 'Content-type: application/atom+xml'
+        print
+        print '<?xml version="1.0" encoding="utf-8"?>'
+        print '<feed xmlns="http://www.w3.org/2005/Atom">'
+        print '  <title>TICS</title>'
+        print '  <link href="http://ticsblog.com/"/>'
+        print '  <updated>2003-12-13T18:30:02Z</updated>'
+        print '  <author>'
+        print '    <name>Ruben Barroso</name>'
+        print '    <email>ruben.bm@gmail.com</email>'
+        print '  </author>'
+        print '  <id>http://ticsblog.com</id>'
+        print '  <rights> (c) 2011 Ruben Barroso</rights>'
+        for post in tabloid.get_paginator().get_page():
+            print '  <entry>'
+            print '    <title>%s</title>' % post.metadata.title
+            print '    <link href="?alt=atom"/>'
+            print '    <id>%s</id>' % md5.new(post.metadata.title).hexdigest()
+            print '    <updated>2003-12-13T18:30:02Z</updated>'
+            print '    <summary>This is a summary</summary>'
+            print '  </entry>'
+        print '</feed>'
+
+        # stop rendering the feed
+        return
 
     # headers
     # Nice google webfonts: Lekton, Jura
@@ -28,7 +51,7 @@ def main():
     print '    <title>%s</title>' % tabloid.title()
     print '  </head>'
     print '  <body>'
-    print '<a href="/index.cgi">Home</a>'
+    print '<a href="/index.cgi">Home</a>', '<a href="?alt=atom">RSS</a>'
     print
 
     # filter building
@@ -46,6 +69,11 @@ def main():
         extra_params['category'] = category
 
     # pagination
+    if "page" in form:
+        page_number = int(form.getvalue("page"))
+    else:
+        page_number = 0
+
     paginator = tabloid.get_paginator(filters)
     if paginator.is_not_empty():
         for post in paginator.get_page(page_number):

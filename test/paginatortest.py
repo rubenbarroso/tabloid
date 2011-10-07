@@ -42,3 +42,8 @@ class PaginatorTestCase(unittest.TestCase):
         """ """
         paginator = Paginator(['a', 'b', 'c', 'd'], 2)
         self.assertTrue(paginator.is_not_empty())
+
+    def test_get_all(self):
+        """ """
+        paginator = Paginator(['a', 'b', 'c', 'd'])
+        self.assertEquals(paginator.get_all(), ['a', 'b', 'c', 'd'])

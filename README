@@ -3,14 +3,14 @@ Tabloid - Requirements
 
 - More than one post per day
 + Post metadata
-  + Title
-  + Category
+  - Title
+  - Category
 + Global metadata
   + Blog title
   + Blog image
   + Blog tagline
   + Author
-  + Max number of posts per page
+  - Max number of posts per page
 + Filesystem structure
   blog/
     index.cgi
@@ -25,26 +25,31 @@ Tabloid - Requirements
           post.config <--- metadata
           post.content <--- contents
 + Metadata
-  + Use ConfigParser (standard lib)
-  + General metadata
+  - Use ConfigParser (standard lib)
+  - General metadata
       [blog]
       title = "TICS"
       tagline = "Still deciding..."
       author = "Rubén Barroso"
       pagesize = 10
-  + Post metadata (post.config)
+  - Post metadata (post.config)
       [post]
-      title = "My first post"
-+ Post body format (post.content)
-  + Probably a reduced set of Markdown (http://daringfireball.net/projects/markdown/basics)
-    + headers
-    + paragraphs
-  + Some special renderers
-    + <code> ... </code>
-    + <imgref id="example.png"/> <-- Hmm, size? Justification?
-    + Cross references between posts -> <post id="2011_09_16_15_50">text</post>
-+ Pagination based on blog.pagesize
-  + HTTP param ?page=X
+      title = My first post
+      category = friends
++ List of links to all categories (bottom of the blog as a cloud)
+- Post body format (post.content)
+  - Probably a reduced set of Markdown (http://daringfireball.net/projects/markdown/basics)
+    - headers
+    - paragraphs
+    - images
+    - emphasis
+    + lists
+    + files
+    - links
+      - internal links
+    + code
+- Pagination based on blog.pagesize
+  - HTTP param ?page=X
 - Visualizing one specific post
   - HTTP param ?post=2011_09_16_15_50
   + The previous URL generated also by <post id=""/> in a post body

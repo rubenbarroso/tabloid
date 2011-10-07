@@ -5,7 +5,7 @@ from sets import Set
 from paginator import Paginator
 from post import Post
 
-post_pattern = re.compile('^\d{4}_\d{2}_\d{2}_\d{2}_\d{2}$')
+post_timestamp_pattern = re.compile('^\d{4}_\d{2}_\d{2}_\d{2}_\d{2}$')
 
 class Tabloid:
     """ """
@@ -29,7 +29,7 @@ class Tabloid:
 
     def _load_posts(self):
         def _is_post(dir):
-            return not post_pattern.match(dir) is None
+            return not post_timestamp_pattern.match(dir) is None
 
         posts = [Post(dir) for dir in listdir('contents/posts') if _is_post(dir)]
         return sorted(posts, key=lambda post: post.metadata.timestamp, reverse=True)

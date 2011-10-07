@@ -1,5 +1,8 @@
 import re
 
+# TODO duplicated in tabloid module IMPORTANT
+post_timestamp_pattern = re.compile('^\d{4}_\d{2}_\d{2}_\d{2}_\d{2}$')
+
 class Renderer:
     """ """
 
@@ -7,7 +10,8 @@ class Renderer:
         self.renderers = [ParagraphRenderer(),
                           HeaderRenderer(),
                           EmphasisRenderer(),
-                          ImageRenderer(post_location)]
+                          ImageRenderer(post_location),
+                          LinkRenderer()]
 
     def render(self, input):
         for renderer in self.renderers:
@@ -25,9 +29,8 @@ class ParagraphRenderer:
         pass
 
     def render(self, input):
-        return re.sub('(\n{2,})((\s|.)+)(\n{2,})',
-                      r'\1<p>\2</p>\4',
-                      input)
+        paragraphs = ['<p>%s</p>\n\n' % x for x in re.split('\n{2,}', input) if x]
+        return ''.join(paragraphs)
 
 
 class HeaderRenderer:
@@ -47,7 +50,7 @@ class HeaderRenderer:
         return header[0] + match.group(2) + header[1] + '\n'
 
     def render(self, input):
-        return re.sub(r'^(#{1,6})[ ](\S.+)\n',
+        return re.sub(r'(#{1,6})[ ](\S.+)\n',
                       self._to_header,
                       input)
 
@@ -59,8 +62,8 @@ class EmphasisRenderer:
         pass
 
     def render(self, input):
-        return re.sub('(?P<star>[\*_])(.+)(?P=star)',
-                      r'<em>\2</em>',
+        return re.sub('(^|\s*|[ ]*)(?P<star>[\*_])([^_]+)(?P=star)([;, ])',
+                      r'\1<em>\3</em>\4',
                       input)
 
 
@@ -74,4 +77,30 @@ class ImageRenderer:
     def render(self, input):
         return re.sub(r'!\[(.*)\]\(([^s]+)[ ]+"(.+)"\)',
                       r'<img src="%s%s\2" alt="\1" title="\3" />' % (self.post_location, "/images/"),
+                      input)
+
+
+class LinkRenderer:
+    """[example link]() ->
+    <a href="http://example.com/">example link</a>"""
+
+    def __init__(self):
+        pass
+
+    def _to_link(self, match):
+        def _is_post(dir):
+            return not post_timestamp_pattern.match(dir) is None
+
+        text = match.group(1)
+        href = match.group(2)
+
+        # internal or external link?
+        if _is_post(href):
+            return r'<a href="?post=%s">%s</a>' % (href, text)
+        else:
+            return '<a href="%s">%s</a>' % (href, text)
+
+    def render(self, input):
+        return re.sub(r'\[(.*)\]\(([^s]+)\)',
+                      self._to_link,
                       input)

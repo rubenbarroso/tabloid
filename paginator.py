@@ -1,9 +1,12 @@
 class Paginator:
     """ """
 
-    def __init__(self, items, page_size):
+    def __init__(self, items, page_size=5):
         self.page_size = page_size
         self.items = items
+
+    def get_all(self):
+        return self.items
 
     def get_page(self, page_number=0):
         first_index, last_index = self._calculate_indexes(page_number)

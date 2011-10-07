@@ -1,5 +1,5 @@
 import unittest
-from renderer import HeaderRenderer, Renderer, ParagraphRenderer, EmphasisRenderer, ImageRenderer
+from renderer import HeaderRenderer, Renderer, ParagraphRenderer, EmphasisRenderer, ImageRenderer, LinkRenderer
 
 class RendererTestCase(unittest.TestCase):
     """ """
@@ -25,17 +25,19 @@ class ParagraphRendererTestCase(unittest.TestCase):
 
     def setUp(self):
         self.cases = [('\n\nThis is a paragraph\n\n',
-                       '\n\n<p>This is a paragraph</p>\n\n'),
-            ('\n\nThis is a\tparagraph\n\n',
-             '\n\n<p>This is a\tparagraph</p>\n\n'),
-            ('\n\nThis is a\nparagraph\n\n',
-             '\n\n<p>This is a\nparagraph</p>\n\n'),
+                       '<p>This is a paragraph</p>\n\n'),
+            ('This is a\tparagraph\n\n',
+             '<p>This is a\tparagraph</p>\n\n'),
+            ('This is a\nparagraph\n\n',
+             '<p>This is a\nparagraph</p>\n\n'),
             ('pre\n\nParagraph\n\n',
-             'pre\n\n<p>Paragraph</p>\n\n'),
-            ('\n\nWith a,comma!\n\n',
-             '\n\n<p>With a,comma!</p>\n\n'),
+             '<p>pre</p>\n\n<p>Paragraph</p>\n\n'),
+            ('With a,comma!\n\n\n',
+             '<p>With a,comma!</p>\n\n'),
             ('\n\n\nParagraph\n\n',
-             '\n\n\n<p>Paragraph</p>\n\n')]
+             '<p>Paragraph</p>\n\n'),
+            ('\n\nFirst Paragraph\n\nSecond Paragraph\n\n',
+             '<p>First Paragraph</p>\n\n<p>Second Paragraph</p>\n\n')]
 
     def test_render(self):
         """Verify header rendering"""
@@ -85,14 +87,17 @@ class EmphasisRendererTestCase(unittest.TestCase):
     """ """
 
     def setUp(self):
-        self.cases = [('*Emphasized*', '<em>Emphasized</em>'),
-            ('_Emphasized_', '<em>Emphasized</em>'),
-            ('*Emphasized_', '*Emphasized_'),
-            ('_Emphasized*', '_Emphasized*'),
-            ('*Empha\nsized*', '*Empha\nsized*')]
+        self.cases = [('*Emphasized* ', '<em>Emphasized</em> '),
+            ('_Emphasized_ ', '<em>Emphasized</em> '),
+            ('*Emphasized_ ', '*Emphasized_ '),
+            ('_Emphasized* ', '_Emphasized* '),
+            ('*Empha\nsized* ', '<em>Empha\nsized</em> '),
+            ('2011_09_15_15_50', '2011_09_15_15_50'),
+            (' _Gregor Samsa_ ', ' <em>Gregor Samsa</em> '),
+            ('_post_,', '<em>post</em>,')]
 
     def test_render(self):
-        """Verify header rendering"""
+        """Verify emphasis rendering"""
         renderer = EmphasisRenderer()
         for input, output in self.cases:
             result = renderer.render(input)
@@ -107,8 +112,26 @@ class ImageRendererTestCase(unittest.TestCase):
                        '<img src="/path/images/img.jpg" alt="alt text" title="title" />')]
 
     def test_render(self):
-        """Verify header rendering"""
+        """Verify image rendering"""
         renderer = ImageRenderer("/path")
+        for input, output in self.cases:
+            result = renderer.render(input)
+            self.assertEqual(output, result)
+
+
+class LinkRendererTestCase(unittest.TestCase):
+    """ """
+
+    def setUp(self):
+        self.cases = [('[example link](http://example.com/)',
+                       '<a href="http://example.com/">example link</a>'),
+            ('[go to oldest post](2011_09_16_15_50)',
+             '<a href="?post=2011_09_16_15_50">go to oldest post</a>')]
+
+    def test_render(self):
+        """Verify header rendering"""
+
+        renderer = LinkRenderer()
         for input, output in self.cases:
             result = renderer.render(input)
             self.assertEqual(output, result)

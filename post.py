@@ -1,16 +1,18 @@
 from __future__ import with_statement
 from ConfigParser import ConfigParser
+import os
+import pickle
 from renderer import Renderer
 from os.path import join
 
 class Post:
-    """ Metadata and contents of a post"""
+    """Metadata and contents of a post"""
 
     def __init__(self, timestamp):
         self.metadata = self._read_post_metadata(timestamp)
 
     def _read_post_metadata(self, timestamp):
-        """ Reads the metadata of a post from a config file"""
+        """Reads the metadata of a post from a config file"""
         location = join('contents/posts', timestamp)
 
         config = ConfigParser()
@@ -19,26 +21,33 @@ class Post:
         categories = config.get("post", "category").split(',')
         return PostMetadata(timestamp, location, title, categories)
 
-    def _read_post_content(self):
-        """ Reads the contents of a post from a file"""
-        post_content_filename = join(self.metadata.location, "post.tabloid")
-        with open(post_content_filename) as content_file:
-            return content_file.read()
+    def read_content(self):
+        """Reads the contents of a post from a file or cache"""
+        cached_contents_pathname = join(self.metadata.location, ".cached_contents")
+        if os.path.exists(cached_contents_pathname):
+            with open(cached_contents_pathname) as cached_contents:
+                return pickle.load(cached_contents)
+        else:
+            post_content_pathname = join(self.metadata.location, "post.tabloid")
+            with open(post_content_pathname) as content_file:
+                contents = content_file.read()
+            return contents
 
     def render(self):
-        """ Renders the contents of this post to be viewed in the browser"""
+        """Renders the contents of this post to be viewed in the browser"""
         # title
         output = ['\n', '<h1><a href="?post=%s">%s</a></h1>' %
                         (self.metadata.timestamp, self.metadata.title), '\n']
 
         # content
         renderer = Renderer(self.metadata.location)
-        content = self._read_post_content()
+        content = self.read_content()
         output.append(renderer.render(content))
 
         # categories
         output.append('<p><small>Posted on ')
-        [output.append('<a href="?category=%s">%s</a> ' % (category, category)) for category in self.metadata.categories]
+        [output.append('<a href="?category=%s">%s</a> ' % (category, category)) for category in
+         self.metadata.categories]
         output.append('</small></p>')
         return ''.join(output)
 
@@ -78,4 +87,3 @@ def with_category(category=None):
             return category in post.metadata.categories
 
     return _pred
-
