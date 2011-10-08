@@ -11,7 +11,8 @@ class Renderer:
                           HeaderRenderer(),
                           EmphasisRenderer(),
                           ImageRenderer(post_location),
-                          LinkRenderer()]
+                          LinkRenderer(),
+                          CodeRenderer()]
 
     def render(self, input):
         for renderer in self.renderers:
@@ -103,4 +104,16 @@ class LinkRenderer:
     def render(self, input):
         return re.sub(r'\[(.*)\]\(([^s]+)\)',
                       self._to_link,
+                      input)
+
+
+class CodeRenderer:
+    """ """
+
+    def __init__(self):
+        pass
+
+    def render(self, input):
+        return re.sub(r'`((.|\s)*)`',
+                      r'<code>\1</code>',
                       input)

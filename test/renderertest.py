@@ -1,5 +1,5 @@
 import unittest
-from renderer import HeaderRenderer, Renderer, ParagraphRenderer, EmphasisRenderer, ImageRenderer, LinkRenderer
+from renderer import HeaderRenderer, Renderer, ParagraphRenderer, EmphasisRenderer, ImageRenderer, LinkRenderer, CodeRenderer
 
 class RendererTestCase(unittest.TestCase):
     """ """
@@ -132,6 +132,23 @@ class LinkRendererTestCase(unittest.TestCase):
         """Verify header rendering"""
 
         renderer = LinkRenderer()
+        for input, output in self.cases:
+            result = renderer.render(input)
+            self.assertEqual(output, result)
+
+
+class CodeRendererTestCase(unittest.TestCase):
+    """ """
+
+    def setUp(self):
+        self.cases = [('`int x = 3;`', '<code>int x = 3;</code>'),
+            ('`\n x = 3;\n print \'Hello, dude! x =\', x\n`',
+             '<code>\n x = 3;\n print \'Hello, dude! x =\', x\n</code>')]
+
+    def test_render(self):
+        """Verify code rendering"""
+
+        renderer = CodeRenderer()
         for input, output in self.cases:
             result = renderer.render(input)
             self.assertEqual(output, result)
